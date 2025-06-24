@@ -11,7 +11,10 @@ const config: Types.Core.GameConfig = {
     backgroundColor: '#028af8',
     scene: [
         MainGame
-    ]
+    ],
+    physics: {
+        default: 'matter'
+    }
 };
 
 const StartGame = (parent: string) => {
