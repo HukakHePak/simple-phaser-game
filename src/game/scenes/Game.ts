@@ -2,12 +2,14 @@ import { Scene } from 'phaser';
 import { EventBus } from '../EventBus';
 import { CONFIG } from '../configs';
 import { StarsData } from '../constants/data/stars';
-import { Collision, Events, IEventCollision, Pair } from 'matter';
 
 let player = {} as Phaser.Physics.Matter.Sprite;
 let cursors = {} as Phaser.Types.Input.Keyboard.CursorKeys;
 let stars = new Array<Phaser.Physics.Matter.Image>();
-let sensor = {} as MatterJS.BodyType; 
+let sensor = {} as MatterJS.BodyType;
+let keyX = {} as Phaser.Input.Keyboard.Key
+let text = {} as Phaser.GameObjects.Text
+let textX = {} as Phaser.GameObjects.Text
 
 const VELOCITY = 2
 
@@ -44,19 +46,52 @@ export class Game extends Scene {
 
         player = this.matter.add.sprite(100, 450, 'dude', undefined, CONFIG.PLAYER)
         player.setFixedRotation()
-        
+        player.setCircle(25)
+
         /** player sensor */
 
-        sensor = this.matter.add.circle(100, 450, 50, { isSensor: true })
+        sensor = this.matter.add.circle(100, 450, 100, { isSensor: true })
 
-        /** sensor collision */
+        /** sensor collision with text display */
 
         sensor.onCollideCallback = (pair) => {
             console.log(pair)
-            console.log(pair.bodyB.gameObject?.data?.values.text)
-        }
-        sensor.onCollideEndCallback = () => console.log('hide')
 
+            text.setText(pair.bodyB.gameObject?.data.values.text)
+        }
+
+        sensor.onCollideEndCallback = () => text.setText('')
+
+
+        /** player text */
+
+        text = this.make.text({
+            x: 400,
+            y: 100,
+            text: '',
+            origin: { x: 0.5, y: 0.5 },
+            style: {
+                font: 'bold 25px Arial',
+                // fill: 'white',
+                wordWrap: { width: 300 }
+            },
+            // origin: {x: 0.5, y: 0.5},
+        });
+
+        /** keyX text */
+
+        textX = this.make.text({
+            x: 400,
+            y: 100,
+            text: '',
+            origin: { x: 0.5, y: 0.5 },
+            style: {
+                font: 'bold 25px Arial',
+                // fill: 'white',
+                wordWrap: { width: 300 }
+            },
+            // origin: {x: 0.5, y: 0.5},
+        });
 
         /** player sprite animation */
 
@@ -84,19 +119,22 @@ export class Game extends Scene {
 
         cursors = this.input.keyboard.createCursorKeys()
 
+        keyX = this.input.keyboard.addKey('x')
+
         /** follow camera */
 
         this.cameras.main.startFollow(player, true, 0.05, 0.05)
 
+        /** camera bounds */
+
+        this.cameras.main.setBounds(0, 0, 800, 600);
+
         /** add static objects (stars) */
 
         StarsData.forEach(star => {
-            const x = Phaser.Math.Between(0, 800);
-            const y = Phaser.Math.Between(0, 600);
-
             const sprite = this.matter.add.sprite(star.x, star.y, 'star')
 
-            sprite.setCircle(20)
+            sprite.setCircle(14)
             sprite.setStatic(true)
 
             sprite.setData({ text: star.text })
@@ -139,5 +177,16 @@ export class Game extends Scene {
 
         sensor.position.x = player.x
         sensor.position.y = player.y
+
+        /** move text position */
+
+        text.setX(player.x)
+        text.setY(player.y - 30)
+
+        // cursors.
+
+        if (keyX.isDown) {
+            textX.setText('Победа!')
+        }
     }
 }
