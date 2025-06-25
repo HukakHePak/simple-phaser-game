@@ -2,6 +2,7 @@ import { Scene } from 'phaser';
 import { EventBus } from '../EventBus';
 import { CONFIG } from '../configs';
 import { StarsData } from '../constants/data/stars';
+import { level } from '../constants/data/level';
 
 let player = {} as Phaser.Physics.Matter.Sprite;
 let cursors = {} as Phaser.Types.Input.Keyboard.CursorKeys;
@@ -10,6 +11,7 @@ let sensor = {} as MatterJS.BodyType;
 let keyX = {} as Phaser.Input.Keyboard.Key
 let text = {} as Phaser.GameObjects.Text
 let textX = {} as Phaser.GameObjects.Text
+let map = {} as Phaser.Tilemaps.Tilemap
 
 const VELOCITY = 2
 
@@ -25,10 +27,9 @@ export class Game extends Scene {
 
         // this.load.image('player', 'Robot Warfare/Robots/Scarab.png')
 
-        this.load.image('sky', 'sky.png');
-        this.load.image('ground', 'platform.png');
+        this.load.image('grassmap', 'grass blue.jpg');
         this.load.image('star', 'star.png');
-        this.load.image('bomb', 'bomb.png');
+        
         this.load.spritesheet('dude',
             'dude.png',
             { frameWidth: 32, frameHeight: 48 }
@@ -40,17 +41,20 @@ export class Game extends Scene {
 
         /** add background */
 
-        this.add.image(400, 300, 'sky');
+        map = this.make.tilemap({ data: level, tileWidth: 128, tileHeight: 128 })
+
+        const tiles = map.addTilesetImage('grassmap')
+        const layer = map.createLayer(0, tiles, 0, 0)
 
         /** init player */
 
-        player = this.matter.add.sprite(100, 450, 'dude', undefined, CONFIG.PLAYER)
+        player = this.matter.add.sprite(this.scale.width * 1.2 / 2, this.scale.height * 1.2 / 2, 'dude', undefined, CONFIG.PLAYER)
         player.setFixedRotation()
         player.setCircle(25)
 
         /** player sensor */
 
-        sensor = this.matter.add.circle(100, 450, 100, { isSensor: true })
+        sensor = this.matter.add.circle(player.x, player.y, 100, { isSensor: true })
 
         /** sensor collision with text display */
 
@@ -124,10 +128,22 @@ export class Game extends Scene {
         /** follow camera */
 
         this.cameras.main.startFollow(player, true, 0.05, 0.05)
+        // this.cameras.main.width = 1280
+        // this.cameras.main.height = 720
+        // this.cameras.main
+
+        /** world bounds */
+
+        const width = this.scale.width * 1.2
+        const height = this.scale.height * 1.2
+
+        // this.scale.setZoom(2)
+
+        this.matter.world.setBounds(0, 0, width, height)
 
         /** camera bounds */
 
-        this.cameras.main.setBounds(0, 0, 800, 600);
+        this.cameras.main.setBounds(0, 0, width, height);
 
         /** add static objects (stars) */
 
@@ -189,4 +205,6 @@ export class Game extends Scene {
             textX.setText('Победа!')
         }
     }
+
+    
 }

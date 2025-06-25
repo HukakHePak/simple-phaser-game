@@ -3,8 +3,8 @@ import { AUTO, Game, Types } from 'phaser';
 
 export const CoreConfiguration: Types.Core.GameConfig = {
     type: AUTO,
-    width: 800,
-    height: 600,
+    width: '100%',
+    height: '100%',
     parent: 'game-container',
     backgroundColor: '#028af8',
     scene: [
@@ -26,17 +26,17 @@ export const CoreConfiguration: Types.Core.GameConfig = {
                 x: 0,
                 y: 0,
             },
-            setBounds: {
-                x: 0,
-                y: 0,
-                width: 800,
-                height: 600,
-                thickness: 4,
-                left: true,
-                right: true,
-                top: true,
-                bottom: true,
-            },
+            // setBounds: {
+            //     x: 0,
+            //     y: 0,
+            //     width: 800,
+            //     height: 600,
+            //     thickness: 4,
+            //     left: true,
+            //     right: true,
+            //     top: true,
+            //     bottom: true,
+            // },
             //    timing: {
             //        timestamp: 0,
             //        timeScale: 1,
