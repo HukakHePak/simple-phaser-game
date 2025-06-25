@@ -31,7 +31,7 @@ export const CoreConfiguration: Types.Core.GameConfig = {
                 y: 0,
                 width: 800,
                 height: 600,
-                thickness: 64,
+                thickness: 4,
                 left: true,
                 right: true,
                 top: true,
@@ -46,7 +46,7 @@ export const CoreConfiguration: Types.Core.GameConfig = {
             //    autoUpdate: true,
             //    debug:true
             //    debug: false,
-            //    debug: {
+               debug: {
             //        showAxes: false,
             //        showAngleIndicator: false,
             //        angleColor: 0xe81153,
@@ -56,7 +56,7 @@ export const CoreConfiguration: Types.Core.GameConfig = {
             //        boundsColor: 0xffffff,
             //        showVelocity: false,
             //        velocityColor: 0x00aeef,
-            //        showCollisions: false,
+                //    showCollisions: false,
             //        collisionColor: 0xf5950c,
             //        showSeparations: false,
             //        separationColor: 0xffa500,
@@ -93,7 +93,7 @@ export const CoreConfiguration: Types.Core.GameConfig = {
             //        anchorSize: 4,
             //        showConvexHulls: false,
             //        hullColor: 0xd703d0
-            //    }
+               }
         },
     }
 };
