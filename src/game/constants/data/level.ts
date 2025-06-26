@@ -1,9 +1,11 @@
+import { MobConfig } from "../../entities/Mobs/Mob"
+
 const map = [] as number[][]
 
 const width = 32
 const height = 18
 
-for(let i = 0; i < height; i++) {
+for (let i = 0; i < height; i++) {
     const line = []
 
     for (let j = 0; j < width; j++) {
@@ -12,14 +14,13 @@ for(let i = 0; i < height; i++) {
     map.push(line)
 }
 
-export enum OBJECT_TYPE {
-    CAR,
-    ROCK,
-    LAMP,
-    GLASS,
-    OTHER
+export const OBJECT_TYPE = {
+    CAR: 'car',
+    ROCK: 'rock',
+    LAMP: 'lamp',
+    GLASS: 'glass',
+    OTHER: 'other'
 }
-
 
 const objects = [
     {
@@ -74,7 +75,23 @@ const objects = [
     },
 ]
 
+export const MOB_TYPE = {
+    HORNET: 'hornet',
+
+}
+const mobs = {
+    HORNET: {
+        type: MOB_TYPE.HORNET,
+        frames: { start: 0, end: 7 },
+        maxDuration: 2500,
+    }
+}
+
+
+
+
 export const LEVEL = {
     MAP: map,
-    OBJECTS: objects
+    OBJECTS: objects,
+    MOBS: mobs
 }

@@ -1,9 +1,10 @@
 import { Math, Scene } from 'phaser';
 import { EventBus } from '../EventBus';
 import { CONFIG } from '../configs';
-import { LEVEL } from '../constants/data/level';
+import { LEVEL, MOB_TYPE } from '../constants/data/level';
 import { lang } from '../lang/en';
-import { Mob } from '../entities/Mobs';
+import { Mob, MobConfig } from '../entities/Mobs/Mob';
+import { MobFactory } from '../entities/Factory/MobFactory';
 
 let player = {} as Phaser.Physics.Matter.Sprite;
 let cursors = {} as Phaser.Types.Input.Keyboard.CursorKeys;
@@ -22,11 +23,7 @@ const OBJECT_GTID_GAP = 32
 export class Game extends Scene {
     constructor() {
         super('Game');
-
-        this.mob = new Mob(this)
     }
-
-    mob: Mob
 
     preload() {
         this.load.setPath('assets');
@@ -41,7 +38,7 @@ export class Game extends Scene {
         this.load.spritesheet('mapobjects16', 'map/objects/obstacles-and-objects.png', { frameWidth: 16, frameHeight: 16 });
         this.load.spritesheet('mapobjects32', 'map/objects/obstacles-and-objects.png', { frameWidth: 32, frameHeight: 32 });
 
-        this.mob.preload()
+        this.load.spritesheet(MOB_TYPE.HORNET, 'map/Robots/Hornet.png', { frameWidth: 24, frameHeight: 24 })
         // new Mob(this).preload()
     }
 
@@ -81,10 +78,6 @@ export class Game extends Scene {
             }
 
         })
-
-        /** init mobs */
-
-        this.mob.create()
 
         /** init player */
 
@@ -193,6 +186,14 @@ export class Game extends Scene {
 
         this.cameras.main.setBounds(0, 0, width, height);
 
+        /** create mobs */
+
+        const mobFactory = new MobFactory(this)
+
+        mobFactory.createMobs(LEVEL.MOBS.HORNET as MobConfig, 20)
+
+        // const mob = new Mob(this, {... LEVEL.MOBS.HORNET, x: 500, y: 600 } as MobConfig)
+
         /** setup */
 
         EventBus.emit('current-scene-ready', this);
@@ -258,7 +259,5 @@ export class Game extends Scene {
         if (keyX.isDown) {
             textX.setText(lang.scanEnd)
         }
-
-        this.mob.update()
     }
 }
