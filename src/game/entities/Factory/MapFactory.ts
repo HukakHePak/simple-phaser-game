@@ -48,7 +48,7 @@ export class MapFactory {
                 sprite.setStatic(true)
                 sprite.setSensor(object.isSensor)
 
-                sprite.setData({ text: object.text })
+                sprite.setData({ sprite, ...object})
             }
 
         })

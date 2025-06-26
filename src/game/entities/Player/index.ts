@@ -3,7 +3,8 @@ import { CONFIG } from "../../configs";
 import { MatterCollideEvent } from "../../types.ts";
 import { lang } from "../../lang/en.ts";
 import { getRandomMapCoordinates } from "../../helpers/index.ts";
-import { MAP_SCALE } from "../../constants/data/level.ts";
+import { LEVEL, MAP_SCALE } from "../../constants/data/level.ts";
+import { BodyType } from "matter";
 
 const VELOCITY = 2
 
@@ -25,16 +26,18 @@ export class PlayerFactory {
     sprite: Phaser.Physics.Matter.Sprite
 
     sensor: MatterJS.BodyType
-    
+
     name: string
-    
+
     headText: Phaser.GameObjects.Text
-    
+
     finalText: Phaser.GameObjects.Text
 
     keyX?: Phaser.Input.Keyboard.Key
 
     cursors?: Phaser.Types.Input.Keyboard.CursorKeys
+
+    collisedValues = new Map<string, { [key: string]: any }>()
 
     create() {
         this.sprite = this.game.matter.add.sprite(this.game.scale.width * MAP_SCALE / 2, this.game.scale.height * MAP_SCALE / 2, this.name, undefined, CONFIG.PLAYER)
@@ -42,17 +45,7 @@ export class PlayerFactory {
         this.sprite.setCircle(12)
         this.sprite.setScale(1.4)
 
-        /** player sensor */
-
-        this.sensor = this.game.matter.add.circle(this.sprite.x, this.sprite.y, 60, { isSensor: true })
-
-        /** sensor collision with text display */
-
-        this.sensor.onCollideCallback = (event: MatterCollideEvent) => {
-            this.headText.setText(event.bodyA.gameObject?.data?.values.text)
-        }
-
-        this.sensor.onCollideEndCallback = () => this.headText.setText('')
+        this.initSensor()
 
 
         /** player text */
@@ -69,7 +62,7 @@ export class PlayerFactory {
         /** keyX text */
 
         this.finalText = this.game.make.text({
-            text: '',
+            text: lang.hi,
             origin: { x: 0.5, y: 0.5 },
             style: {
                 font: 'bold 32px Arial',
@@ -117,11 +110,46 @@ export class PlayerFactory {
             frames: this.sprite.anims.generateFrameNumbers(this.name, { start: 12, end: 17 }),
             frameRate: FRAME_RATE,
             repeat: -1
-        }); 
+        });
 
         this.initKeyboard()
 
         return this.sprite
+    }
+
+    initSensor() {
+        /** player sensor */
+
+        this.sensor = this.game.matter.add.circle(this.sprite.x, this.sprite.y, 60, { isSensor: true })
+
+        /** sensor collision with text display */
+
+        this.sensor.onCollideCallback = (event: MatterCollideEvent) => {
+            // console.log(event.bodyA.gameObject?.data)
+            const values = event.bodyA.gameObject?.data?.values
+
+            if (values) {
+                this.collisedValues.set(event.id, values)
+                this.updateText()
+            }
+        }
+
+        this.sensor.onCollideEndCallback = (event: MatterCollideEvent) => {
+            this.collisedValues.delete(event.id)
+            this.updateText()
+        }
+    }
+
+    updateText() {
+        const values = Array.from(this.collisedValues.values())
+
+        const types = values.map(item => lang[item.type]).join(', ')
+
+        if(types.length) {
+            this.headText.setText(`${lang.scanning} ${types}`)
+        } else {
+            this.headText.setText('')
+        }
     }
 
     initKeyboard() {
@@ -157,10 +185,12 @@ export class PlayerFactory {
         }
     }
 
-    movePlayer() {
-        if(!this.cursors) {
-            // this.initKeyboard()
+    hideInitText() {
+        this.finalText.setText('')
+    }
 
+    movePlayer() {
+        if (!this.cursors) {
             return
         }
 
@@ -168,32 +198,32 @@ export class PlayerFactory {
 
         if (this.cursors.left.isDown) {
             this.sprite.setX(x - VELOCITY);
-
             this.sprite.anims.play('left', true);
+            this.hideInitText()
 
             return
         }
 
         if (this.cursors.right.isDown) {
             this.sprite.setX(x + VELOCITY);
-
             this.sprite.anims.play('right', true);
+            this.hideInitText()
 
             return
         }
 
         if (this.cursors.up.isDown) {
             this.sprite.setY(y - VELOCITY);
-
             this.sprite.anims.play('up', true);
+            this.hideInitText()
 
             return
         }
 
         if (this.cursors.down.isDown) {
             this.sprite.setY(y + VELOCITY);
-
             this.sprite.anims.play('down', true);
+            this.hideInitText()
 
             return
         }

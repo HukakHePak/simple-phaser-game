@@ -34,7 +34,6 @@ const objects = [
         scale: 1,
         tiles: [86, 87, 88],
         count: 100,
-        text: 'Hmm, the glass',
         isSensor: true,
     },
     {
@@ -44,7 +43,6 @@ const objects = [
         scale: 1,
         tiles: [80, 81, 82, 83, 84, 85],
         count: 60,
-        text: 'Awesome...',
         isSensor: true,
     },
     {
@@ -54,7 +52,6 @@ const objects = [
         scale: 1,
         tiles: [64, 65, 66],
         count: 60,
-        text: 'Hmm, the rock',
         isSensor: false,
     },
     {
@@ -64,7 +61,6 @@ const objects = [
         scale: 1,
         tiles: [16, 17],
         count: 20,
-        text: 'Hmm, the lamp',
         isSensor: true,
     },
     {
@@ -74,7 +70,6 @@ const objects = [
         scale: 1,
         tiles: [32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 50, 51, 54, 55],
         count: 20,
-        text: 'Scanning the car...',
         isSensor: false,
     },
 ]
