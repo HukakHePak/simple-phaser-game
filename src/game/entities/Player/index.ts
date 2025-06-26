@@ -19,6 +19,7 @@ export class PlayerFactory {
         this.game = scene
 
         this.name = config.name
+        this.type = config.name
     }
 
     game: Scene
@@ -30,6 +31,8 @@ export class PlayerFactory {
     radar: Phaser.GameObjects.Arc
 
     name: string
+
+    type: string
 
     headText: Phaser.GameObjects.Text
 
@@ -46,6 +49,8 @@ export class PlayerFactory {
         this.sprite.setFixedRotation()
         this.sprite.setCircle(12)
         this.sprite.setScale(1.4)
+
+        this.sprite.setData(this)
 
         this.initSensor()
 

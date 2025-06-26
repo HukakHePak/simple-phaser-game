@@ -12,6 +12,7 @@ export interface MobConfig {
     startDelay?: number
     maxDuration?: number
     radius?: number
+    killFrame?: number
     isSensor?: boolean
 }
 
@@ -25,10 +26,11 @@ export class Mob {
         this.frames = config.frames
         this.frameRate = config.frameRate || 8
         this.scale = config.scale || 1
-        this.movementDelay = config.movementDelay || 1000
+        this.movementDelay = config.movementDelay ?? 1000
         this.startDelay = config.startDelay || 0
         this.maxDuration = config.maxDuration || 2000
         this.radius = config.radius || 8
+        this.killFrame = config.killFrame ?? -1
         this.isSensor = config.isSensor || false
     }
 
@@ -58,7 +60,11 @@ export class Mob {
 
     private timeout: number | undefined
 
+    killFrame: number
+
     isSensor: boolean
+
+    protected chain: Phaser.Tweens.TweenChain 
 
     destroy() {
         this.sprite.destroy()
@@ -77,24 +83,53 @@ export class Mob {
 
         this.sprite.anims.play('move', true)
 
+        this.sprite.anims.create({
+            key: 'kill',
+            frames: [{ key: this.type, frame: this.killFrame }],
+            frameRate: this.frameRate,
+        })
+
         this.sprite.setScale(this.scale)
 
         this.sprite.setSensor(this.isSensor)
 
-        this.sprite.setOnCollide(this.onCollide)
+        if (this.killFrame > -1) {
+            this.sprite.setOnCollide(this.onCollide.bind(this))
+        }
 
         this.sprite.setData(this)
 
-        const chain = this.movement()
+        this.chain = this.movement()
 
-        chain.pause()
+        this.chain.pause()
 
         this.timeout = setTimeout(() => {
-            chain.resume()
+            this.chain.resume()
         }, this.startDelay)
     }
 
-    onCollide(event: MatterCollideEvent) { }
+    kill() {
+        this.sprite.anims.play('kill', true)
+
+        this.chain.stop()
+
+        this.game.tweens.add({
+            targets: this.sprite,
+            alpha: 0,
+            ease: 'Linear',
+            duration: 1000,
+            delay: 5000,
+            onComplete: () => {
+                this.destroy()
+            }
+        })
+    }
+
+    onCollide(event: MatterCollideEvent) {
+        if (event.bodyB.gameObject?.data?.values.type === 'player') {
+            this.kill()
+        }
+    }
 
     movement() {
         return this.game.tweens.chain({

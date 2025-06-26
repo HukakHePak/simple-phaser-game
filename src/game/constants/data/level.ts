@@ -84,22 +84,19 @@ const mobs = {
         type: MOB_TYPE.HORNET,
         frames: { start: 0, end: 7 },
         maxDuration: 2500,
-        // radius: 8,
-        // scale: 1.4
     },
     SCARAB: {
         type: MOB_TYPE.SCARAB,
         frames: { start: 0, end: 1 },
         maxDuration: 2500,
-        // radius: 8,
-        // scale: 1.4
+        isSensor: true,
+        killFrame: 20,
     },
     SOLDIER: {
         type: MOB_TYPE.SOLDIER,
         frames: { start: 0, end: 1 },
         maxDuration: 2500,
         scale: 1.2,
-        // radius: 8,
     }
 }
 
