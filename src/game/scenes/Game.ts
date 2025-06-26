@@ -2,6 +2,7 @@ import { Math, Scene } from 'phaser';
 import { EventBus } from '../EventBus';
 import { CONFIG } from '../configs';
 import { LEVEL } from '../constants/data/level';
+import { lang } from '../lang/en';
 
 let player = {} as Phaser.Physics.Matter.Sprite;
 let cursors = {} as Phaser.Types.Input.Keyboard.CursorKeys;
@@ -44,24 +45,47 @@ export class Game extends Scene {
         const tiles = map.addTilesetImage('grassmap')
         const layer = map.createLayer(0, tiles, 0, 0)
 
+        /** add map objects */
+
+        const width = this.scale.width * 1.2
+        const height = this.scale.height * 1.2
+
+        LEVEL.OBJECTS.forEach(object => {
+            for (let i = 0; i < object.count; i++) {
+                // const sprite = this.matter.add.sprite(Math.Between(0, width), Math.Between(0, height), object.source, Math.Between(0, 20))
+                // const sprite = this.matter.add.sprite(Math.Between(0, width), Math.Between(0, height), object.source, 17)
+                const sprite = this.matter.add.sprite(Math.Between(0, width), Math.Between(0, height), object.source, object.tiles[Math.Between(0, object.tiles.length - 1)])
+
+                if(object.radius) {
+                    sprite.setCircle(object.radius)
+                }
+
+                sprite.setScale(object.scale)
+                sprite.setStatic(true)
+                sprite.setSensor(object.isSensor)
+
+                sprite.setData({ text: object.text })
+            }
+
+        })
+
         /** init player */
 
         player = this.matter.add.sprite(this.scale.width * 1.2 / 2, this.scale.height * 1.2 / 2, 'player', undefined, CONFIG.PLAYER)
         player.setFixedRotation()
-        player.setCircle(14)
+        player.setCircle(12)
         player.setScale(1.4)
-        // player.setScale(5)
 
         /** player sensor */
 
-        sensor = this.matter.add.circle(player.x, player.y, 100, { isSensor: true })
+        sensor = this.matter.add.circle(player.x, player.y, 60, { isSensor: true })
 
         /** sensor collision with text display */
 
         sensor.onCollideCallback = (pair) => {
             console.log(pair)
 
-            text.setText(pair.bodyB.gameObject?.data.values.text)
+            text.setText(pair.bodyA.gameObject?.data?.values.text)
         }
 
         sensor.onCollideEndCallback = () => text.setText('')
@@ -73,26 +97,20 @@ export class Game extends Scene {
             text: '',
             origin: { x: 0.5, y: 0.5 },
             style: {
-                font: 'bold 25px Arial',
-                // fill: 'white',
+                font: 'bold 16px Arial',
                 wordWrap: { width: 300 }
             },
-            // origin: {x: 0.5, y: 0.5},
         });
 
         /** keyX text */
 
-        textX = this.make.text({
-            x: this.scale.width / 2,
-            y: this.scale.height / 2,
+        textX = this.make.text({        // make sprite, center camera
             text: '',
             origin: { x: 0.5, y: 0.5 },
             style: {
-                font: 'bold 25px Arial',
-                // fill: 'white',
+                font: 'bold 32px Arial',
                 wordWrap: { width: 300 }
             },
-            // origin: {x: 0.5, y: 0.5},
         });
 
         /** player sprite animation */
@@ -124,14 +142,14 @@ export class Game extends Scene {
         });
 
         this.anims.create({
-            key: 'up',
+            key: 'down',
             frames: this.anims.generateFrameNumbers('player', { start: 0, end: 5 }),
             frameRate: FRAME_RATE,
             repeat: -1
         });
 
         this.anims.create({
-            key: 'down',
+            key: 'up',
             frames: this.anims.generateFrameNumbers('player', { start: 12, end: 17 }),
             frameRate: FRAME_RATE,
             repeat: -1
@@ -149,37 +167,14 @@ export class Game extends Scene {
 
         /** world bounds */
 
-        const width = this.scale.width * 1.2
-        const height = this.scale.height * 1.2
+        // const width = this.scale.width * 1.2
+        // const height = this.scale.height * 1.2
 
         this.matter.world.setBounds(0, 0, width, height)
 
         /** camera bounds */
 
         this.cameras.main.setBounds(0, 0, width, height);
-
-        /** add map objects */
-
-        LEVEL.OBJECTS.forEach(object => {
-            for (let i = 0; i < object.count; i++) {
-                // const sprite = this.matter.add.sprite(Math.Between(0, width), Math.Between(0, height), object.source, Math.Between(0, 20))
-                // const sprite = this.matter.add.sprite(Math.Between(0, width), Math.Between(0, height), object.source, 17)
-                const sprite = this.matter.add.sprite(Math.Between(0, width), Math.Between(0, height), object.source, object.tiles[Math.Between(0, object.tiles.length - 1)])
-
-                if(object.radius) {
-                    sprite.setCircle(object.radius)
-                }
-
-                sprite.setScale(object.scale)
-
-                sprite.setStatic(true)
-
-                // sprite.setFrame(0)
-
-                sprite.setData({ text: object.text })
-            }
-
-        })
 
         /** setup */
 
@@ -238,10 +233,13 @@ export class Game extends Scene {
         text.setX(player.x)
         text.setY(player.y - 30)
 
+        textX.setX(player.x)
+        textX.setY(player.y - 100)
+
         // cursors.
 
         if (keyX.isDown) {
-            textX.setText('Победа!')
+            textX.setText(lang.scanEnd)
         }
     }
 

@@ -1,5 +1,5 @@
 import { Game as MainGame } from '../scenes/Game';
-import { AUTO, Game, Types } from 'phaser';
+import { AUTO, Types } from 'phaser';
 
 export const CoreConfiguration: Types.Core.GameConfig = {
     type: AUTO,
@@ -46,7 +46,7 @@ export const CoreConfiguration: Types.Core.GameConfig = {
             //    autoUpdate: true,
             //    debug:true
             //    debug: false,
-               debug: {
+            //    debug: {
             //        showAxes: false,
             //        showAngleIndicator: false,
             //        angleColor: 0xe81153,
@@ -93,7 +93,7 @@ export const CoreConfiguration: Types.Core.GameConfig = {
             //        anchorSize: 4,
             //        showConvexHulls: false,
             //        hullColor: 0xd703d0
-               }
+            //    }
         },
     }
 };
