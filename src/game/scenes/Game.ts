@@ -42,9 +42,9 @@ export class Game extends Scene {
 
         const mobFactory = new MobFactory(this)
 
-        // mobFactory.createMobs(LEVEL.MOBS.HORNET as MobConfig, 10)
-        mobFactory.createMobs(LEVEL.MOBS.SCARAB as MobConfig, 20)
-        // mobFactory.createMobs(LEVEL.MOBS.SOLDIER as MobConfig, 10)
+        mobFactory.createMobs(LEVEL.MOBS.HORNET as MobConfig, 10)
+        mobFactory.createMobs(LEVEL.MOBS.SCARAB as MobConfig, 10)
+        mobFactory.createMobs(LEVEL.MOBS.SOLDIER as MobConfig, 10)
 
         /** init player */
 

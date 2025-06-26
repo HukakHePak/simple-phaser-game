@@ -171,7 +171,7 @@ export class PlayerFactory {
 
         const uniqTypes = [...new Set(types).values()].join(', ')
 
-        if (types.length) {
+        if (uniqTypes.length) {
             this.headText.setText(`${lang.scanning} ${uniqTypes}`)
         } else {
             this.headText.setText('')
