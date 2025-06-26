@@ -23,26 +23,6 @@ export enum OBJECT_TYPE {
 
 const objects = [
     {
-        type: OBJECT_TYPE.CAR,
-        source: 'mapobjects32',
-        radius: 12,
-        scale: 1,
-        tiles: [32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 50, 51, 54, 55],
-        count: 40,
-        text: 'Scanning the car...',
-        isSensor: false,
-    },
-    {
-        type: OBJECT_TYPE.ROCK,
-        source: 'mapobjects16',
-        radius: 8,
-        scale: 1,
-        tiles: [64, 65, 66],
-        count: 100,
-        text: 'Hmm, the rock',
-        isSensor: false,
-    },
-    {
         type: OBJECT_TYPE.GLASS,
         source: 'mapobjects16',
         radius: 8,
@@ -63,6 +43,16 @@ const objects = [
         isSensor: true,
     },
     {
+        type: OBJECT_TYPE.ROCK,
+        source: 'mapobjects16',
+        radius: 8,
+        scale: 1,
+        tiles: [64, 65, 66],
+        count: 100,
+        text: 'Hmm, the rock',
+        isSensor: false,
+    },
+    {
         type: OBJECT_TYPE.LAMP,
         source: 'mapobjects16',
         radius: 8,
@@ -71,6 +61,16 @@ const objects = [
         count: 50,
         text: 'Hmm, the lamp',
         isSensor: true,
+    },
+    {
+        type: OBJECT_TYPE.CAR,
+        source: 'mapobjects32',
+        radius: 12,
+        scale: 1,
+        tiles: [32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 50, 51, 54, 55],
+        count: 40,
+        text: 'Scanning the car...',
+        isSensor: false,
     },
 ]
 

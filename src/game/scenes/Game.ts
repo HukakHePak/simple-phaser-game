@@ -16,6 +16,8 @@ const VELOCITY = 2
 
 const FRAME_RATE = 32
 
+const OBJECT_GTID_GAP = 32
+
 export class Game extends Scene {
     constructor() {
         super('Game');
@@ -54,7 +56,10 @@ export class Game extends Scene {
             for (let i = 0; i < object.count; i++) {
                 // const sprite = this.matter.add.sprite(Math.Between(0, width), Math.Between(0, height), object.source, Math.Between(0, 20))
                 // const sprite = this.matter.add.sprite(Math.Between(0, width), Math.Between(0, height), object.source, 17)
-                const sprite = this.matter.add.sprite(Math.Between(0, width), Math.Between(0, height), object.source, object.tiles[Math.Between(0, object.tiles.length - 1)])
+                const gridX = Math.RoundTo(Math.Between(0, width) / OBJECT_GTID_GAP, 0) * OBJECT_GTID_GAP
+                const gridY = Math.RoundTo(Math.Between(0, height) / OBJECT_GTID_GAP, 0) * OBJECT_GTID_GAP
+
+                const sprite = this.matter.add.sprite(gridX, gridY, object.source, object.tiles[Math.Between(0, object.tiles.length - 1)])
 
                 if(object.radius) {
                     sprite.setCircle(object.radius)
