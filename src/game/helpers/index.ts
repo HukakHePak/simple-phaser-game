@@ -1,11 +1,12 @@
 import { Math, Scene } from "phaser"
+import { MAP_SCALE } from "../constants/data/level"
 
 export const getRandomMapCoordinates = (scene: Scene, gap?: number) => {
     const { width, height } = scene.scale
 
     if(gap) {
-        const x = Math.RoundTo(Math.Between(0, width) / gap, 0) * gap
-        const y = Math.RoundTo(Math.Between(0, height) / gap, 0) * gap
+        const x = Math.RoundTo(Math.Between(0, width * MAP_SCALE) / gap, 0) * gap
+        const y = Math.RoundTo(Math.Between(0, height * MAP_SCALE) / gap, 0) * gap
     
         return { x, y }
     }

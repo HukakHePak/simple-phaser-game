@@ -22,6 +22,10 @@ export const OBJECT_TYPE = {
     OTHER: 'other'
 }
 
+export const MAP_SCALE = 1.2
+
+export const OBJECT_GTID_GAP = 32
+
 const objects = [
     {
         type: OBJECT_TYPE.GLASS,
