@@ -27,6 +27,8 @@ export class PlayerFactory {
 
     sensor: MatterJS.BodyType
 
+    radar: Phaser.GameObjects.Arc
+
     name: string
 
     headText: Phaser.GameObjects.Text
@@ -112,6 +114,8 @@ export class PlayerFactory {
             repeat: -1
         });
 
+        this.initRadar()
+
         this.initKeyboard()
 
         return this.sprite
@@ -125,7 +129,6 @@ export class PlayerFactory {
         /** sensor collision with text display */
 
         this.sensor.onCollideCallback = (event: MatterCollideEvent) => {
-            // console.log(event.bodyA.gameObject?.data)
             const values = event.bodyA.gameObject?.data?.values
 
             if (values) {
@@ -140,13 +143,31 @@ export class PlayerFactory {
         }
     }
 
+    initRadar() {
+        const { x, y } = this.sprite
+
+        this.radar = this.game.add.circle(x, y, 10)
+        this.radar.setStrokeStyle(2, 0xFFFFFF, 0.1)
+
+        this.game.tweens.add({
+            targets: this.radar,
+            radius: 60,
+            ease: 'Linear',
+            duration: 1000,
+            repeat: -1,
+            alpha: 0
+        })
+    }
+
     updateText() {
         const values = Array.from(this.collisedValues.values())
 
-        const types = values.map(item => lang[item.type]).join(', ')
+        const types = values.map(item => lang[item.type])
 
-        if(types.length) {
-            this.headText.setText(`${lang.scanning} ${types}`)
+        const uniqTypes = [...new Set(types).values()].join(', ')
+
+        if (types.length) {
+            this.headText.setText(`${lang.scanning} ${uniqTypes}`)
         } else {
             this.headText.setText('')
         }
@@ -171,6 +192,8 @@ export class PlayerFactory {
 
         this.sensor.position.x = x
         this.sensor.position.y = y
+        this.radar.x = x
+        this.radar.y = y
 
         /** move text position */
 
