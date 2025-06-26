@@ -1,12 +1,10 @@
 import { Math, Scene } from 'phaser';
 import { EventBus } from '../EventBus';
 import { CONFIG } from '../configs';
-import { StarsData } from '../constants/data/stars';
 import { LEVEL } from '../constants/data/level';
 
 let player = {} as Phaser.Physics.Matter.Sprite;
 let cursors = {} as Phaser.Types.Input.Keyboard.CursorKeys;
-let stars = new Array<Phaser.Physics.Matter.Image>();
 let sensor = {} as MatterJS.BodyType;
 let keyX = {} as Phaser.Input.Keyboard.Key
 let text = {} as Phaser.GameObjects.Text
