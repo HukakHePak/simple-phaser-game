@@ -5,7 +5,9 @@ import { MOB_TYPE } from "../../constants/data/level";
 import { FlyMob } from "../Mobs";
 
 const Mobs = {
-    [MOB_TYPE.HORNET]: FlyMob
+    [MOB_TYPE.HORNET]: FlyMob,
+    [MOB_TYPE.SCARAB]: Mob,
+    [MOB_TYPE.SOLDIER]: Mob
 }
 
 export class MobFactory {

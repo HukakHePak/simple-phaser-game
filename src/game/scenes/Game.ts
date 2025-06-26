@@ -3,10 +3,10 @@ import { EventBus } from '../EventBus';
 import { CONFIG } from '../configs';
 import { LEVEL, MOB_TYPE } from '../constants/data/level';
 import { lang } from '../lang/en';
-import { Mob, MobConfig } from '../entities/Mobs/Mob';
+import { MobConfig } from '../entities/Mobs/Mob';
 import { MobFactory } from '../entities/Factory/MobFactory';
+import { MatterCollideEvent } from '../types.ts';
 
-let player = {} as Phaser.Physics.Matter.Sprite;
 let cursors = {} as Phaser.Types.Input.Keyboard.CursorKeys;
 let sensor = {} as MatterJS.BodyType;
 let keyX = {} as Phaser.Input.Keyboard.Key
@@ -25,6 +25,8 @@ export class Game extends Scene {
         super('Game');
     }
 
+    player = {} as Phaser.Physics.Matter.Sprite;
+
     preload() {
         this.load.setPath('assets');
 
@@ -39,6 +41,8 @@ export class Game extends Scene {
         this.load.spritesheet('mapobjects32', 'map/objects/obstacles-and-objects.png', { frameWidth: 32, frameHeight: 32 });
 
         this.load.spritesheet(MOB_TYPE.HORNET, 'map/Robots/Hornet.png', { frameWidth: 24, frameHeight: 24 })
+        this.load.spritesheet(MOB_TYPE.SCARAB, 'map/Robots/Scarab.png', { frameWidth: 16, frameHeight: 16 })
+        this.load.spritesheet(MOB_TYPE.SOLDIER, 'map/Soldiers/Assault-Class.png', { frameWidth: 16, frameHeight: 16 })
         // new Mob(this).preload()
     }
 
@@ -66,7 +70,7 @@ export class Game extends Scene {
 
                 const sprite = this.matter.add.sprite(gridX, gridY, object.source, object.tiles[Math.Between(0, object.tiles.length - 1)])
 
-                if(object.radius) {
+                if (object.radius) {
                     sprite.setCircle(object.radius)
                 }
 
@@ -79,23 +83,29 @@ export class Game extends Scene {
 
         })
 
+        /** create mobs */
+
+        const mobFactory = new MobFactory(this)
+
+        mobFactory.createMobs(LEVEL.MOBS.HORNET as MobConfig, 10)
+        mobFactory.createMobs(LEVEL.MOBS.SCARAB as MobConfig, 10)
+        mobFactory.createMobs(LEVEL.MOBS.SOLDIER as MobConfig, 10)
+
         /** init player */
 
-        player = this.matter.add.sprite(this.scale.width * 1.2 / 2, this.scale.height * 1.2 / 2, 'player', undefined, CONFIG.PLAYER)
-        player.setFixedRotation()
-        player.setCircle(12)
-        player.setScale(1.4)
+        this.player = this.matter.add.sprite(this.scale.width * 1.2 / 2, this.scale.height * 1.2 / 2, 'player', undefined, CONFIG.PLAYER)
+        this.player.setFixedRotation()
+        this.player.setCircle(12)
+        this.player.setScale(1.4)
 
         /** player sensor */
 
-        sensor = this.matter.add.circle(player.x, player.y, 60, { isSensor: true })
+        sensor = this.matter.add.circle(this.player.x, this.player.y, 60, { isSensor: true })
 
         /** sensor collision with text display */
 
-        sensor.onCollideCallback = (pair) => {
-            console.log(pair)
-
-            text.setText(pair.bodyA.gameObject?.data?.values.text)
+        sensor.onCollideCallback = (event: MatterCollideEvent) => {
+            text.setText(event.bodyA.gameObject?.data?.values.text)
         }
 
         sensor.onCollideEndCallback = () => text.setText('')
@@ -173,7 +183,7 @@ export class Game extends Scene {
 
         /** follow camera */
 
-        this.cameras.main.startFollow(player, true, 0.05, 0.05)
+        this.cameras.main.startFollow(this.player, true, 0.05, 0.05)
 
         /** world bounds */
 
@@ -186,13 +196,7 @@ export class Game extends Scene {
 
         this.cameras.main.setBounds(0, 0, width, height);
 
-        /** create mobs */
 
-        const mobFactory = new MobFactory(this)
-
-        mobFactory.createMobs(LEVEL.MOBS.HORNET as MobConfig, 20)
-
-        // const mob = new Mob(this, {... LEVEL.MOBS.HORNET, x: 500, y: 600 } as MobConfig)
 
         /** setup */
 
@@ -202,38 +206,38 @@ export class Game extends Scene {
 
     movePlayer() {
         if (cursors.left.isDown) {
-            player.setX(player.x - VELOCITY);
+            this.player.setX(this.player.x - VELOCITY);
 
-            player.anims.play('left', true);
+            this.player.anims.play('left', true);
 
             return
         }
 
         if (cursors.right.isDown) {
-            player.setX(player.x + VELOCITY);
+            this.player.setX(this.player.x + VELOCITY);
 
-            player.anims.play('right', true);
+            this.player.anims.play('right', true);
 
             return
         }
 
         if (cursors.up.isDown) {
-            player.setY(player.y - VELOCITY);
+            this.player.setY(this.player.y - VELOCITY);
 
-            player.anims.play('up', true);
+            this.player.anims.play('up', true);
 
             return
         }
 
         if (cursors.down.isDown) {
-            player.setY(player.y + VELOCITY);
+            this.player.setY(this.player.y + VELOCITY);
 
-            player.anims.play('down', true);
+            this.player.anims.play('down', true);
 
             return
         }
 
-        player.anims.stop()
+        this.player.anims.stop()
     }
 
     update(time: number, delta: number): void {
@@ -243,16 +247,16 @@ export class Game extends Scene {
 
         /** move player sensor */
 
-        sensor.position.x = player.x
-        sensor.position.y = player.y
+        sensor.position.x = this.player.x
+        sensor.position.y = this.player.y
 
         /** move text position */
 
-        text.setX(player.x)
-        text.setY(player.y - 30)
+        text.setX(this.player.x)
+        text.setY(this.player.y - 30)
 
-        textX.setX(player.x)
-        textX.setY(player.y - 100)
+        textX.setX(this.player.x)
+        textX.setY(this.player.y - 100)
 
         // cursors.
 

@@ -6,7 +6,7 @@ export class FlyMob extends Mob {
     constructor(game: Scene, config: MobConfig) {
         super(game, config)
 
-        console.log(this.maxDuration)
+        this.isSensor = true
     }
 
     movement() {

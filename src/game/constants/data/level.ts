@@ -29,7 +29,7 @@ const objects = [
         radius: 8,
         scale: 1,
         tiles: [86, 87, 88],
-        count: 200,
+        count: 100,
         text: 'Hmm, the glass',
         isSensor: true,
     },
@@ -39,7 +39,7 @@ const objects = [
         radius: 8,
         scale: 1,
         tiles: [80, 81, 82, 83, 84, 85],
-        count: 100,
+        count: 60,
         text: 'Awesome...',
         isSensor: true,
     },
@@ -49,7 +49,7 @@ const objects = [
         radius: 8,
         scale: 1,
         tiles: [64, 65, 66],
-        count: 100,
+        count: 60,
         text: 'Hmm, the rock',
         isSensor: false,
     },
@@ -59,7 +59,7 @@ const objects = [
         radius: 8,
         scale: 1,
         tiles: [16, 17],
-        count: 50,
+        count: 20,
         text: 'Hmm, the lamp',
         isSensor: true,
     },
@@ -69,7 +69,7 @@ const objects = [
         radius: 12,
         scale: 1,
         tiles: [32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 50, 51, 54, 55],
-        count: 40,
+        count: 20,
         text: 'Scanning the car...',
         isSensor: false,
     },
@@ -77,18 +77,32 @@ const objects = [
 
 export const MOB_TYPE = {
     HORNET: 'hornet',
-
+    SCARAB: 'scarab',
+    SOLDIER: 'soldier'
 }
 const mobs = {
     HORNET: {
         type: MOB_TYPE.HORNET,
         frames: { start: 0, end: 7 },
         maxDuration: 2500,
+        // radius: 8,
+        // scale: 1.4
+    },
+    SCARAB: {
+        type: MOB_TYPE.SCARAB,
+        frames: { start: 0, end: 1 },
+        maxDuration: 2500,
+        // radius: 8,
+        // scale: 1.4
+    },
+    SOLDIER: {
+        type: MOB_TYPE.SOLDIER,
+        frames: { start: 0, end: 1 },
+        maxDuration: 2500,
+        scale: 1.2,
+        // radius: 8,
     }
 }
-
-
-
 
 export const LEVEL = {
     MAP: map,

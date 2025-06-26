@@ -1,4 +1,5 @@
 import { Scene } from "phaser";
+import { MatterCollideEvent } from "../../types.ts";
 
 export interface MobConfig {
     x: number
@@ -10,6 +11,8 @@ export interface MobConfig {
     movementDelay?: number
     startDelay?: number
     maxDuration?: number
+    radius?: number
+    isSensor?: boolean
 }
 
 export class Mob {
@@ -25,17 +28,19 @@ export class Mob {
         this.movementDelay = config.movementDelay || 1000
         this.startDelay = config.startDelay || 0
         this.maxDuration = config.maxDuration || 2000
-
-        this.create()
+        this.radius = config.radius || 8
+        this.isSensor = config.isSensor || false
     }
 
     protected game: Scene
 
-    sprite: Phaser.GameObjects.Sprite
+    sprite: Phaser.Physics.Matter.Sprite
 
     x: number
 
     y: number
+
+    radius: number
 
     type: string
 
@@ -53,13 +58,15 @@ export class Mob {
 
     private timeout: number | undefined
 
+    isSensor: boolean
+
     destroy() {
         this.sprite.destroy()
         clearTimeout(this.timeout)
     }
 
     create() {
-        this.sprite = this.game.add.sprite(this.x, this.y, this.type)
+        this.sprite = this.game.matter.add.sprite(this.x, this.y, this.type)
 
         this.sprite.anims.create({
             key: 'move',
@@ -72,6 +79,12 @@ export class Mob {
 
         this.sprite.setScale(this.scale)
 
+        this.sprite.setSensor(this.isSensor)
+
+        this.sprite.setOnCollide(this.onCollide)
+
+        this.sprite.setData(this)
+
         const chain = this.movement()
 
         chain.pause()
@@ -81,34 +94,14 @@ export class Mob {
         }, this.startDelay)
     }
 
+    onCollide(event: MatterCollideEvent) { }
+
     movement() {
         return this.game.tweens.chain({
             tweens: [
                 {
                     targets: this.sprite,
                     x: this.x + 50,
-                    y: this.y + 25,
-                    ease: 'Linear',
-                    duration: this.maxDuration,
-                    delay: this.movementDelay,
-                    onStart: () => {
-                        this.sprite.setFlipX(false)
-                    }
-                },
-                {
-                    targets: this.sprite,
-                    x: this.x - 50,
-                    ease: 'Linear',
-                    duration: this.maxDuration * 0.8,
-                    delay: this.movementDelay,
-                    onStart: () => {
-                        this.sprite.setFlipX(true)
-                    }
-                },
-                {
-                    targets: this.sprite,
-                    x: this.x + 50,
-                    y: this.y - 25,
                     ease: 'Linear',
                     duration: this.maxDuration,
                     delay: this.movementDelay,
