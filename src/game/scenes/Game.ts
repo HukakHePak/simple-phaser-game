@@ -2,7 +2,7 @@ import { Scene } from 'phaser';
 import { EventBus } from '../EventBus';
 import { CONFIG } from '../configs';
 import { StarsData } from '../constants/data/stars';
-import { level } from '../constants/data/level';
+import { LEVEL } from '../constants/data/level';
 
 let player = {} as Phaser.Physics.Matter.Sprite;
 let cursors = {} as Phaser.Types.Input.Keyboard.CursorKeys;
@@ -15,7 +15,7 @@ let map = {} as Phaser.Tilemaps.Tilemap
 
 const VELOCITY = 2
 
-const FRAME_RATE = 10
+const FRAME_RATE = 32
 
 export class Game extends Scene {
     constructor() {
@@ -27,12 +27,12 @@ export class Game extends Scene {
 
         // this.load.image('player', 'Robot Warfare/Robots/Scarab.png')
 
-        this.load.image('grassmap', 'grass blue.jpg');
+        this.load.image('grassmap', 'map/grass blue.jpg');
         this.load.image('star', 'star.png');
-        
-        this.load.spritesheet('dude',
-            'dude.png',
-            { frameWidth: 32, frameHeight: 48 }
+
+        this.load.spritesheet('player',
+            'robot/robot_blue.png',
+            { frameWidth: 32, frameHeight: 32 }
         );
     }
 
@@ -41,16 +41,18 @@ export class Game extends Scene {
 
         /** add background */
 
-        map = this.make.tilemap({ data: level, tileWidth: 128, tileHeight: 128 })
+        map = this.make.tilemap({ data: LEVEL.MAP, tileWidth: 128, tileHeight: 128 })
 
         const tiles = map.addTilesetImage('grassmap')
         const layer = map.createLayer(0, tiles, 0, 0)
 
         /** init player */
 
-        player = this.matter.add.sprite(this.scale.width * 1.2 / 2, this.scale.height * 1.2 / 2, 'dude', undefined, CONFIG.PLAYER)
+        player = this.matter.add.sprite(this.scale.width * 1.2 / 2, this.scale.height * 1.2 / 2, 'player', undefined, CONFIG.PLAYER)
         player.setFixedRotation()
-        player.setCircle(25)
+        player.setCircle(14)
+        player.setScale(1.4)
+        // player.setScale(5)
 
         /** player sensor */
 
@@ -70,8 +72,6 @@ export class Game extends Scene {
         /** player text */
 
         text = this.make.text({
-            x: 400,
-            y: 100,
             text: '',
             origin: { x: 0.5, y: 0.5 },
             style: {
@@ -85,8 +85,8 @@ export class Game extends Scene {
         /** keyX text */
 
         textX = this.make.text({
-            x: 400,
-            y: 100,
+            x: this.scale.width / 2,
+            y: this.scale.height / 2,
             text: '',
             origin: { x: 0.5, y: 0.5 },
             style: {
@@ -100,21 +100,41 @@ export class Game extends Scene {
         /** player sprite animation */
 
         this.anims.create({
+            key: 'turn down',
+            frames: [{ key: 'player', frame: 12 }],
+            frameRate: FRAME_RATE
+        });
+
+        this.anims.create({
+            key: 'turn up',
+            frames: [{ key: 'player', frame: 0 }],
+            frameRate: FRAME_RATE
+        });
+
+        this.anims.create({
             key: 'left',
-            frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
+            frames: this.anims.generateFrameNumbers('player', { start: 18, end: 23 }),
             frameRate: FRAME_RATE,
             repeat: -1
         });
 
         this.anims.create({
-            key: 'turn',
-            frames: [{ key: 'dude', frame: 4 }],
-            frameRate: FRAME_RATE
+            key: 'right',
+            frames: this.anims.generateFrameNumbers('player', { start: 6, end: 11 }),
+            frameRate: FRAME_RATE,
+            repeat: -1
         });
 
         this.anims.create({
-            key: 'right',
-            frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+            key: 'up',
+            frames: this.anims.generateFrameNumbers('player', { start: 0, end: 5 }),
+            frameRate: FRAME_RATE,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'down',
+            frames: this.anims.generateFrameNumbers('player', { start: 12, end: 17 }),
             frameRate: FRAME_RATE,
             repeat: -1
         });
@@ -164,30 +184,46 @@ export class Game extends Scene {
 
     }
 
-    update(time: number, delta: number): void {
-        /** player movement */
-
+    movePlayer() {
         if (cursors.left.isDown) {
             player.setX(player.x - VELOCITY);
 
             player.anims.play('left', true);
+            
+            return
         }
-        else if (cursors.right.isDown) {
+
+        if (cursors.right.isDown) {
             player.setX(player.x + VELOCITY);
 
             player.anims.play('right', true);
-        }
-        else {
-            player.anims.play('turn');
+
+            return
         }
 
         if (cursors.up.isDown) {
             player.setY(player.y - VELOCITY);
+
+            player.anims.play('up', true);
+
+            return
         }
 
         if (cursors.down.isDown) {
             player.setY(player.y + VELOCITY);
+
+            player.anims.play('down', true);
+
+            return
         }
+
+        player.anims.stop()
+    }
+
+    update(time: number, delta: number): void {
+        /** player movement */
+
+        this.movePlayer()
 
         /** move player sensor */
 
@@ -206,5 +242,5 @@ export class Game extends Scene {
         }
     }
 
-    
+
 }
