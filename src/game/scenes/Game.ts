@@ -3,6 +3,7 @@ import { EventBus } from '../EventBus';
 import { CONFIG } from '../configs';
 import { LEVEL } from '../constants/data/level';
 import { lang } from '../lang/en';
+import { Mob } from '../entities/Mobs';
 
 let player = {} as Phaser.Physics.Matter.Sprite;
 let cursors = {} as Phaser.Types.Input.Keyboard.CursorKeys;
@@ -21,7 +22,11 @@ const OBJECT_GTID_GAP = 32
 export class Game extends Scene {
     constructor() {
         super('Game');
+
+        this.mob = new Mob(this)
     }
+
+    mob: Mob
 
     preload() {
         this.load.setPath('assets');
@@ -35,6 +40,9 @@ export class Game extends Scene {
 
         this.load.spritesheet('mapobjects16', 'map/objects/obstacles-and-objects.png', { frameWidth: 16, frameHeight: 16 });
         this.load.spritesheet('mapobjects32', 'map/objects/obstacles-and-objects.png', { frameWidth: 32, frameHeight: 32 });
+
+        this.mob.preload()
+        // new Mob(this).preload()
     }
 
     create() {
@@ -73,6 +81,10 @@ export class Game extends Scene {
             }
 
         })
+
+        /** init mobs */
+
+        this.mob.create()
 
         /** init player */
 
@@ -246,7 +258,7 @@ export class Game extends Scene {
         if (keyX.isDown) {
             textX.setText(lang.scanEnd)
         }
+
+        this.mob.update()
     }
-
-
 }
