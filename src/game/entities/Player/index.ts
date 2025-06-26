@@ -62,7 +62,8 @@ export class PlayerFactory {
             origin: { x: 0.5, y: 0.5 },
             style: {
                 font: 'bold 16px Arial',
-                wordWrap: { width: 300 }
+                wordWrap: { width: 300 },
+                align: 'center'
             },
         });
 
@@ -167,9 +168,21 @@ export class PlayerFactory {
     updateText() {
         const values = Array.from(this.collisedValues.values())
 
-        const types = values.map(item => lang[item.type])
+        const multiplies = new Map<string, number>()
 
-        const uniqTypes = [...new Set(types).values()].join(', ')
+        values.forEach(item => {
+            const type = lang[item.type]
+            
+            const count = multiplies.get(type)
+
+            multiplies.set(type, (count || 0) + 1)
+        })
+
+        const uniqTypes = Array.from(multiplies.entries()).filter(item => item[0]).map(([type, count]) => {
+            if(!type) return ''
+
+            return `${count} ${type}`
+        }).join(', ')
 
         if (uniqTypes.length) {
             this.headText.setText(`${lang.scanning} ${uniqTypes}`)
@@ -215,6 +228,7 @@ export class PlayerFactory {
 
     hideInitText() {
         this.finalText.setText('')
+        this.radar.resu
     }
 
     movePlayer() {
