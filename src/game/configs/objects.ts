@@ -1,10 +1,10 @@
-export const PlayerConfiguration = {
+export const ObjectsConfiguration = {
     // label: 'Body',
-    // shape: 'circle',
-    // radius: 100,
+    shape: 'circle',
+    radius: 50,
     // chamfer: null,
 
-    // isStatic: false,
+    isStatic: true,
     // isSensor: false,
     // isSleeping: false,
     // ignoreGravity: false,
@@ -35,7 +35,7 @@ export const PlayerConfiguration = {
     //     ]
     // },
 
-    // slop: 0.05,
+    // slop: 20,
 
     // timeScale: 1,
 }
