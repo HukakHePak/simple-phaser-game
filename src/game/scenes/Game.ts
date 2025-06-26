@@ -1,4 +1,4 @@
-import { Scene } from 'phaser';
+import { Math, Scene } from 'phaser';
 import { EventBus } from '../EventBus';
 import { CONFIG } from '../configs';
 import { StarsData } from '../constants/data/stars';
@@ -25,15 +25,15 @@ export class Game extends Scene {
     preload() {
         this.load.setPath('assets');
 
-        // this.load.image('player', 'Robot Warfare/Robots/Scarab.png')
-
         this.load.image('grassmap', 'map/grass blue.jpg');
-        this.load.image('star', 'star.png');
 
         this.load.spritesheet('player',
             'robot/robot_blue.png',
             { frameWidth: 32, frameHeight: 32 }
         );
+
+        this.load.spritesheet('mapobjects16', 'map/objects/obstacles-and-objects.png', { frameWidth: 16, frameHeight: 16 });
+        this.load.spritesheet('mapobjects32', 'map/objects/obstacles-and-objects.png', { frameWidth: 32, frameHeight: 32 });
     }
 
     create() {
@@ -148,16 +148,11 @@ export class Game extends Scene {
         /** follow camera */
 
         this.cameras.main.startFollow(player, true, 0.05, 0.05)
-        // this.cameras.main.width = 1280
-        // this.cameras.main.height = 720
-        // this.cameras.main
 
         /** world bounds */
 
         const width = this.scale.width * 1.2
         const height = this.scale.height * 1.2
-
-        // this.scale.setZoom(2)
 
         this.matter.world.setBounds(0, 0, width, height)
 
@@ -165,17 +160,27 @@ export class Game extends Scene {
 
         this.cameras.main.setBounds(0, 0, width, height);
 
-        /** add static objects (stars) */
+        /** add map objects */
 
-        StarsData.forEach(star => {
-            const sprite = this.matter.add.sprite(star.x, star.y, 'star')
+        LEVEL.OBJECTS.forEach(object => {
+            for (let i = 0; i < object.count; i++) {
+                // const sprite = this.matter.add.sprite(Math.Between(0, width), Math.Between(0, height), object.source, Math.Between(0, 20))
+                // const sprite = this.matter.add.sprite(Math.Between(0, width), Math.Between(0, height), object.source, 17)
+                const sprite = this.matter.add.sprite(Math.Between(0, width), Math.Between(0, height), object.source, object.tiles[Math.Between(0, object.tiles.length - 1)])
 
-            sprite.setCircle(14)
-            sprite.setStatic(true)
+                if(object.radius) {
+                    sprite.setCircle(object.radius)
+                }
 
-            sprite.setData({ text: star.text })
+                sprite.setScale(object.scale)
 
-            stars.push(sprite)
+                sprite.setStatic(true)
+
+                // sprite.setFrame(0)
+
+                sprite.setData({ text: object.text })
+            }
+
         })
 
         /** setup */
@@ -189,7 +194,7 @@ export class Game extends Scene {
             player.setX(player.x - VELOCITY);
 
             player.anims.play('left', true);
-            
+
             return
         }
 
