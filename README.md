@@ -16,3 +16,7 @@ This template has been updated for:
 | `npm run build` | Create a production build in the `dist` folder |
 | `npm run dev-nolog` | Launch a development web server without sending anonymous data (see "About log.js" below) |
 | `npm run build-nolog` | Create a production build in the `dist` folder without sending anonymous data (see "About log.js" below) |
+
+## Техническое задание
+![image](https://github.com/user-attachments/assets/a5da2b0c-6231-4c08-8911-f5bd76d4c4e6)
+
